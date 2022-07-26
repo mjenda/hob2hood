@@ -1,0 +1,77 @@
+esphome:
+  name: hob2hood
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi-ssid
+  password: !secret wifi-password
+  manual_ip:
+    static_ip: !secret ip-address
+    gateway: !secret ip-gateway
+    subnet: !secret ip-subnet
+
+remote_transmitter:
+  pin: D5
+  # Infrared remotes use a 50% carrier signal
+  carrier_duty_percent: 50%
+
+ota:
+
+api:
+
+switch:
+  - platform: template
+    name: Turn on lights
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [718, -1472, 720, -726, 1388, -752,
+                 718, -1472, 694, -750, 1390, -2994,
+                 720, -724,  720, -726, 1386]
+  - platform: template
+    name: Turn off lights
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [684, -1488, 658, -778, 684, -758,
+                 686, -2278, 660, -788, 628, -1532,
+                 688, -1504, 686, -786, 658]
+  - platform: template
+    name: Turn off fan
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [720,  -1468, 722, -1470, 2114, -1472, 722, -1470,
+                 1416, -2218, 724, -1470, 724,  -720,  698]
+  - platform: template
+    name: Turn on fan - lvl 1
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [1418, -1496, 722, -1468, 2114, -1472, 724, -1466,
+                724,  -722,  722, -1470, 698,  -2214, 698]
+  - platform: template
+    name: Turn on fan - lvl 2
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [1440, -1472, 724,  -2936, 752,
+                 -2190, 3530, -2224, 2114]
+  - platform: template
+    name: Turn on fan - lvl 3
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [722, -2242, 2808, -2942, 2140,
+                 -724, 700,  -2240, 2088]
+  - platform: template
+    name: Turn on fan - lvl max
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          carrier_frequency: 38kHz
+          code: [1416, -2244, 1418, -722, 1418, -2216, 1418,
+                 -1470, 724,  -2216, 722, -722,  1392]
+
+logger:
+  level: debug
